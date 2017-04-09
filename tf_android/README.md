@@ -78,6 +78,8 @@ Any errors here will need to be addressed before building.
 ## Step 7. Confirm Your Android Studio Setup Is Working
 The build.gradle file loads sources sets from Tensorflow's Java API. You should see two additional source roots appear in your project tree.
 
+![2 Sources](../screenshots/sources.png)
+
 If you see these sources, you can now build and run the application (green play button).
 
 ## Common Errors
