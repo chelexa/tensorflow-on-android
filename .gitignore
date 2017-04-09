@@ -38,3 +38,11 @@ captures/
 
 # Keystore files
 *.jks
+
+# MacOS
+.DS_Store
+
+# Project specific
+gradleBuild/
+bin/
+libs/
