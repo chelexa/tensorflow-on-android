@@ -78,7 +78,8 @@ Any errors here will need to be addressed before building.
 ## Step 7. Confirm Your Android Studio Setup Is Working
 The build.gradle file loads sources sets from Tensorflow's Java API. You should see two additional source roots appear in your project tree.
 
-If you see these sources, you can now build and run the application (green play button).
+Once you see these sources, you now need to add the TensorflowTrainingInterface to your project.
+Find the TensorFlowTrainingInterface.java file at the root of this repo. Copy and paste this file into the tensorflow/tensorflow/contrib/android/java directory. You can now build and run the application (green play button).
 
 ## Common Errors
 Most common errors can be fixed by ensuring:

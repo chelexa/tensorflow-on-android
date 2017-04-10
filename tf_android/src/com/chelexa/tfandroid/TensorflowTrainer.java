@@ -4,7 +4,7 @@ import android.content.res.AssetManager;
 import android.os.Trace;
 import android.util.Log;
 
-import org.tensorflow.contrib.android.TensorFlowInferenceInterface;
+import org.tensorflow.contrib.android.TensorFlowTrainingInterface;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -43,7 +43,7 @@ public class TensorflowTrainer {
 
     private boolean logStats = false;
 
-    private TensorFlowInferenceInterface inferenceInterface;
+    private TensorFlowTrainingInterface trainingInterface;
 
     private TensorflowTrainer() {}
 
@@ -78,14 +78,14 @@ public class TensorflowTrainer {
         c.outputs = new float[1];
         c.weights = new float[K * D];
         c.assetManager = assetManager;
-        c.inferenceInterface = new TensorFlowInferenceInterface(assetManager, modelFilename);
+        c.trainingInterface = new TensorFlowTrainingInterface(assetManager, modelFilename);
 
         // testing data
         c.readTestingFeatures();
         c.readTestingLabels();
 
         // The shape of the output is [N, NUM_CLASSES], where N is the batch size.
-//        final Operation operation = c.inferenceInterface.graphOperation(outputName);
+//        final Operation operation = c.trainingInterface.graphOperation(outputName);
 //        final int numClasses = (int) operation.output(0).shape().size(1);
 //        Log.i(TAG, "Read " + c.labels.size() + " labels, output layer size is " + numClasses);
 
@@ -124,8 +124,8 @@ public class TensorflowTrainer {
 //        }
 
         Trace.beginSection("init_vars");
-        //inferenceInterface.feed(initName, new float[0], 0);
-        inferenceInterface.run(new String[]{}, new String[]{initName}, logStats);
+        //trainingInterface.feed(initName, new float[0], 0);
+        trainingInterface.run(new String[]{}, new String[]{initName}, logStats);
         Trace.endSection();
 
         for (int i = 0; i < numIterations; i++) {
@@ -145,36 +145,36 @@ public class TensorflowTrainer {
 
             // Copy the input data into TensorFlow.
             //Trace.beginSection("feed");
-            //inferenceInterface.feed(inputName, featureFloats, 100, 32);
-            //inferenceInterface.feed(outputName, labelFloats, 100, 8);
+            //trainingInterface.feed(inputName, featureFloats, 100, 32);
+            //trainingInterface.feed(outputName, labelFloats, 100, 8);
             //Trace.endSection();
 
             // Run the inference call.
             //Trace.beginSection("run");
-            //inferenceInterface.run(new String[]{costName}, new String[]{}, logStats);
+            //trainingInterface.run(new String[]{costName}, new String[]{}, logStats);
             //Trace.endSection();
 
             // Copy the output Tensor back into the output array.
             //Trace.beginSection("fetch");
-            //inferenceInterface.fetch(costName, outputs);
+            //trainingInterface.fetch(costName, outputs);
             //Trace.endSection();
 
             //trainingActivity.LogToView("L2 loss", outputs[0] + "");
 
             // Copy the training data into TensorFlow.
             Trace.beginSection("feed");
-            inferenceInterface.feed(inputName, trainFeatureBatch, BATCH_SIZE, 784);
-            inferenceInterface.feed(outputName, trainLabelBatch, BATCH_SIZE, 2);
+            trainingInterface.feed(inputName, trainFeatureBatch, BATCH_SIZE, 784);
+            trainingInterface.feed(outputName, trainLabelBatch, BATCH_SIZE, 2);
             Trace.endSection();
 
             // Run a single step of training
             Trace.beginSection("train");
-            inferenceInterface.run(new String[]{}, new String[]{trainName}, logStats);
+            trainingInterface.run(new String[]{}, new String[]{trainName}, logStats);
             Trace.endSection();
 
             // Copy the weights Tensor into the weights array.
             //Trace.beginSection("fetch");
-            //inferenceInterface.fetch("weights", weights);
+            //trainingInterface.fetch("weights", weights);
             //Trace.endSection();
             //Log.d("weights", weights[0] + "");
 
@@ -183,18 +183,18 @@ public class TensorflowTrainer {
             if (i == 0 || (i+1) % stepsToTest == 0){
                 // Copy the test data into TensorFlow.
                 Trace.beginSection("feed");
-                inferenceInterface.feed(inputName, testFeatures, 220, 784);
-                inferenceInterface.feed(outputName, testLabels, 220, 2);
+                trainingInterface.feed(inputName, testFeatures, 220, 784);
+                trainingInterface.feed(outputName, testLabels, 220, 2);
                 Trace.endSection();
 
                 // Run the inference call.
                 Trace.beginSection("test");
-                inferenceInterface.run(new String[]{testName}, new String[]{}, logStats);
+                trainingInterface.run(new String[]{testName}, new String[]{}, logStats);
                 Trace.endSection();
 
                 // Copy the accuracy Tensor back into the output array.
                 Trace.beginSection("fetch");
-                inferenceInterface.fetch(testName, outputs);
+                trainingInterface.fetch(testName, outputs);
                 Trace.endSection();
 
                 trainingActivity.LogToView("Test Accuracy", outputs[0] * 100 + "%", "accuracy");
@@ -207,18 +207,18 @@ public class TensorflowTrainer {
 
         // Copy the test data into TensorFlow.
 //        Trace.beginSection("feed");
-//        inferenceInterface.feed(inputName, testFeatures, 220, 784);
-//        inferenceInterface.feed(outputName, testLabels, 220, 2);
+//        trainingInterface.feed(inputName, testFeatures, 220, 784);
+//        trainingInterface.feed(outputName, testLabels, 220, 2);
 //        Trace.endSection();
 //
 //        // Run the inference call.
 //        Trace.beginSection("test");
-//        inferenceInterface.run(new String[]{testName}, new String[]{}, logStats);
+//        trainingInterface.run(new String[]{testName}, new String[]{}, logStats);
 //        Trace.endSection();
 //
 //        // Copy the output Tensor back into the output array.
 //        Trace.beginSection("fetch");
-//        inferenceInterface.fetch(testName, outputs);
+//        trainingInterface.fetch(testName, outputs);
 //        Trace.endSection();
 //
 //        trainingActivity.LogToView("Test accuracy", outputs[0] + "");
@@ -404,11 +404,11 @@ public class TensorflowTrainer {
     }
 
     public String getStatString() {
-        return inferenceInterface.getStatString();
+        return trainingInterface.getStatString();
     }
 
     public void close() {
-        inferenceInterface.close();
+        trainingInterface.close();
         testFeatures = null;
         testLabels = null;
     }
