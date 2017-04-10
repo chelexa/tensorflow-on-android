@@ -33,6 +33,9 @@ Now that you have Bazel installed on your system, you need to have the Android N
 
 ### Step 3.1 NDK
 The Android NDK is required to build the native (C/C++) TensorFlow code. The current recommended version is 12b, which may be found [here](https://developer.android.com/ndk/downloads/older_releases.html#ndk-12b-downloads).
+#### Where do I put it?
+You can put the downloaded directory anywhere on your system, as long as you remember where it is. You probably also want to ensure this location is permanent. I placed it in the same directory as my SDK (not sure if this is standard or not).
+My Android SDK is installed at /Users/[my user name]/Library/Android/.
 
 ### Step 3.2 SDK
 The Android SDK and build tools may be obtained [here](https://developer.android.com/tools/revisions/build-tools.html), or alternatively as part of Android Studio. Build tools API >= 23 is required to build the TF Android training demo (though it will run on API >= 21 devices).
