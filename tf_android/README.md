@@ -75,13 +75,16 @@ which bazel
 
 Any errors here will need to be addressed before building.
 
-## Step 7. Confirm Your Android Studio Setup Is Working
+## Step 7. Add the TensorFlowTrainingInterface
 The build.gradle file loads sources sets from Tensorflow's Java API. You should see two additional source roots appear in your project tree.
 
 ![2 Sources](../screenshots/sources.png)
 
 Once you see these sources, you now need to add the TensorflowTrainingInterface to your project.
-Find the TensorFlowTrainingInterface.java file at the root of this repo. Copy and paste this file into the tensorflow/tensorflow/contrib/android/java directory. You can now build and run the application (green play button).
+Find the [TensorFlowTrainingInterface.java](https://github.com/chelexa/tensorflow-on-android/blob/master/tf_android/TFTrainingInterface/TensorFlowTrainingInterface.java) file in the TFTrainingInterface directory. Copy and paste this file into [this directory](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/android/java/org/tensorflow/contrib/android) (the location of the current TensorFlowInferenceInterface).
+
+## Step 8. Confirm Your Android Studio Setup Is Working
+ You can now build and run the application (green play button). If all went well, your app should load on your device. Note that emulation is currently not supported.
 
 ## Common Errors
 Most common errors can be fixed by ensuring:
