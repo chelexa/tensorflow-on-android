@@ -38,7 +38,7 @@ The Android NDK is required to build the native (C/C++) TensorFlow code. The cur
 The Android SDK and build tools may be obtained [here](https://developer.android.com/tools/revisions/build-tools.html), or alternatively as part of Android Studio. Build tools API >= 23 is required to build the TF Android training demo (though it will run on API >= 21 devices).
 
 ## Step 4. Edit WORKSPACE
-The Android entries in (tensorflow/WORKSPACE)[https://github.com/tensorflow/tensorflow/blob/master/WORKSPACE#L19-L32] must be uncommented with the paths filled in appropriately depending on
+The Android entries in [tensorflow/WORKSPACE](https://github.com/tensorflow/tensorflow/blob/master/WORKSPACE#L19-L32) must be uncommented with the paths filled in appropriately depending on
 where you installed the NDK and SDK. Otherwise an error such as: "The external label '//external:android/sdk' is not bound to
 anything" will be reported.
 
@@ -77,6 +77,8 @@ Any errors here will need to be addressed before building.
 
 ## Step 7. Confirm Your Android Studio Setup Is Working
 The build.gradle file loads sources sets from Tensorflow's Java API. You should see two additional source roots appear in your project tree.
+
+![2 Sources](../screenshots/sources.png)
 
 Once you see these sources, you now need to add the TensorflowTrainingInterface to your project.
 Find the TensorFlowTrainingInterface.java file at the root of this repo. Copy and paste this file into the tensorflow/tensorflow/contrib/android/java directory. You can now build and run the application (green play button).
