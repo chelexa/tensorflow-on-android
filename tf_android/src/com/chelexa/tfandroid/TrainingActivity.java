@@ -14,7 +14,7 @@ import android.widget.ToggleButton;
 
 public class TrainingActivity extends Activity implements View.OnClickListener {
 
-    private static final String MODEL_FILE = "file:///android_asset/mnist_mlp.pb";
+    private static final String MODEL_FILE = "file:///android_asset/mnist_50_mlp.pb";
 
     private static final String INIT_NAME = "init";
     private static final String INPUT_NAME = "x";
