@@ -1,5 +1,4 @@
 /* Copyright 2016 The TensorFlow Authors. All Rights Reserved.
-             2017 Tyler Zeller
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,6 +12,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 ==============================================================================*/
+
+/*
+  This file is a modified version of the TensorFlowInferenceInterface. You can view
+  the full Apache 2.0 TensorFlow LICENSE and original project at 
+  github.com/tensorflow/tensorflow.
+*/
 
 package org.tensorflow.contrib.android;
 
@@ -504,6 +509,7 @@ public class TensorFlowInferenceInterface {
   private List<Tensor> feedTensors = new ArrayList<Tensor>();
   private List<String> fetchNames = new ArrayList<String>();
   private List<Tensor> fetchTensors = new ArrayList<Tensor>();
+  // Added in the TensorFlowTrainingInterface
   private List<String> targetNames = new ArrayList<String>();
 
   // Mutable state.

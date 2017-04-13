@@ -33,6 +33,9 @@ Now that you have Bazel installed on your system, you need to have the Android N
 
 ### Step 3.1 NDK
 The Android NDK is required to build the native (C/C++) TensorFlow code. The current recommended version is 12b, which may be found [here](https://developer.android.com/ndk/downloads/older_releases.html#ndk-12b-downloads).
+#### Where do I put it?
+You can put the downloaded directory anywhere on your system, as long as you remember where it is. You probably also want to ensure this location is permanent. I placed it in the same directory as my SDK (not sure if this is standard or not).
+My Android SDK is installed at /Users/[my user name]/Library/Android/.
 
 ### Step 3.2 SDK
 The Android SDK and build tools may be obtained [here](https://developer.android.com/tools/revisions/build-tools.html), or alternatively as part of Android Studio. Build tools API >= 23 is required to build the TF Android training demo (though it will run on API >= 21 devices).
@@ -75,13 +78,16 @@ which bazel
 
 Any errors here will need to be addressed before building.
 
-## Step 7. Confirm Your Android Studio Setup Is Working
+## Step 7. Add the TensorFlowTrainingInterface
 The build.gradle file loads sources sets from Tensorflow's Java API. You should see two additional source roots appear in your project tree.
 
 ![2 Sources](../screenshots/sources.png)
 
 Once you see these sources, you now need to add the TensorflowTrainingInterface to your project.
-Find the TensorFlowTrainingInterface.java file at the root of this repo. Copy and paste this file into the tensorflow/tensorflow/contrib/android/java directory. You can now build and run the application (green play button).
+Find the [TensorFlowTrainingInterface.java](https://github.com/chelexa/tensorflow-on-android/blob/master/tf_android/TFTrainingInterface/TensorFlowTrainingInterface.java) file in the TFTrainingInterface directory. Copy and paste this file into [this directory](https://github.com/tensorflow/tensorflow/tree/master/tensorflow/contrib/android/java/org/tensorflow/contrib/android) (the location of the current TensorFlowInferenceInterface).
+
+## Step 8. Confirm Your Android Studio Setup Is Working
+ You can now build and run the application (green play button). If all went well, your app should load on your device. Note that emulation is currently not supported.
 
 ## Common Errors
 Most common errors can be fixed by ensuring:
@@ -91,3 +97,6 @@ Most common errors can be fixed by ensuring:
 ### NoClassDefFoundError
 This is a runtime error related to running code from either of the external TF sources (The TF Inference library, or the TF Java API).
 This was solved for me by running from the menu bar Build > Clean Project
+
+### No OpKernel was registered to support Op 'Mod' with these attrs
+This is an issue with the default [BUILD](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/kernels/BUILD) file cloned from the TensorFlow repo. Locate this file on you file system and locate the filegroup named "android_extended_ops_group1". Under 'srcs' add "cwise_op_mod.cc". This will include the Mod operation you need when during training.
