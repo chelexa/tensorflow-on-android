@@ -23,10 +23,10 @@ public class TensorflowTrainer {
 
     private static int BATCH_SIZE = 1; // When this is 1, algorithm is SGD
     private static int D = 784;
-    private static int K = 2;
-    private static int N = 12665;
-    private static int testN = 220;
-    private static int stepsToTest = 1;
+    private static int K = 10;
+    private static int N = 60000;
+    private static int testN = 1000;
+    private static int stepsToTest = 10;
     private static float[] testFeatures;
     private static float[] testLabels;
 
@@ -163,8 +163,8 @@ public class TensorflowTrainer {
 
             // Copy the training data into TensorFlow.
             Trace.beginSection("feed");
-            trainingInterface.feed(inputName, trainFeatureBatch, BATCH_SIZE, 784);
-            trainingInterface.feed(outputName, trainLabelBatch, BATCH_SIZE, 2);
+            trainingInterface.feed(inputName, trainFeatureBatch, BATCH_SIZE, D);
+            trainingInterface.feed(outputName, trainLabelBatch, BATCH_SIZE, K);
             Trace.endSection();
 
             // Run a single step of training
@@ -183,8 +183,8 @@ public class TensorflowTrainer {
             if (i == 0 || (i+1) % stepsToTest == 0){
                 // Copy the test data into TensorFlow.
                 Trace.beginSection("feed");
-                trainingInterface.feed(inputName, testFeatures, 220, 784);
-                trainingInterface.feed(outputName, testLabels, 220, 2);
+                trainingInterface.feed(inputName, testFeatures, testN, D);
+                trainingInterface.feed(outputName, testLabels, testN, K);
                 Trace.endSection();
 
                 // Run the inference call.
@@ -236,7 +236,7 @@ public class TensorflowTrainer {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(
-                    new InputStreamReader(assetManager.open("mnist_data/binaryTrainImages.dat")));
+                    new InputStreamReader(assetManager.open("mnist_data/MNISTTrainImages.dat")));
 
             // do reading, usually loop until end of file reading
             int count = 0;
@@ -253,7 +253,7 @@ public class TensorflowTrainer {
                 if (idcs.contains(count)){
                     features = line.split(",| ");
                     for(int i = 0; i < D; i++) {
-                        trainingFeatures[samples * D + i] = Float.parseFloat(features[i]) / 255.0f;
+                        trainingFeatures[samples * D + i] = Float.parseFloat(features[i]);
                         //sampleFeatures[i] = Double.parseDouble(features[i]);
                     }
                     samples++;
@@ -281,7 +281,7 @@ public class TensorflowTrainer {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(
-                    new InputStreamReader(assetManager.open("mnist_data/binaryTestImages.dat")));
+                    new InputStreamReader(assetManager.open("mnist_data/MNISTTestImages.dat")));
 
             // do reading, usually loop until end of file reading
             int count = 0;
@@ -291,7 +291,7 @@ public class TensorflowTrainer {
                 //process line
                 features = line.split(",| ");
                 for(int i = 0; i < D; i++) {
-                    testFeatures[count * D + i] = Float.parseFloat(features[i]) / 255.0f;
+                    testFeatures[count * D + i] = Float.parseFloat(features[i]);
                     //sampleFeatures[i] = Double.parseDouble(features[i]);
                 }
                 count++;
@@ -321,7 +321,7 @@ public class TensorflowTrainer {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(
-                    new InputStreamReader(assetManager.open("mnist_data/binaryTrainLabels.dat")));
+                    new InputStreamReader(assetManager.open("mnist_data/MNISTTrainLabels.dat")));
 
             // do reading, usually loop until end of file reading
             int i = 0;
@@ -336,13 +336,7 @@ public class TensorflowTrainer {
                     line = line.trim();
                     int sampleLabel = Integer.parseInt(line);
                     // For 1-hot encoding
-                    if(sampleLabel == 0){
-                        trainingLabels[2 * sample + 0] = 1;
-                        trainingLabels[2 * sample + 1] = 0;
-                    } else {
-                        trainingLabels[2 * sample + 0] = 0;
-                        trainingLabels[2 * sample + 1] = 1;
-                    }
+                    trainingLabels[K * sample + sampleLabel] = 1;
                     sample++;
                 }
                 i++;
@@ -367,7 +361,7 @@ public class TensorflowTrainer {
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(
-                    new InputStreamReader(assetManager.open("mnist_data/binaryTestLabels.dat")));
+                    new InputStreamReader(assetManager.open("mnist_data/MNISTTestLabels.dat")));
 
             // do reading, usually loop until end of file reading
             int i = 0;
@@ -377,13 +371,7 @@ public class TensorflowTrainer {
                 line = line.trim();
                 int sampleLabel = Integer.parseInt(line);
                 // For 1-hot encoding
-                if(sampleLabel == 0){
-                    testLabels[2 * i + 0] = 1;
-                    testLabels[2 * i + 1] = 0;
-                } else {
-                    testLabels[2 * i + 0] = 0;
-                    testLabels[2 * i + 1] = 1;
-                }
+                testLabels[K * i + sampleLabel] = 1;
                 i++;
             }
         } catch (IOException e) {
