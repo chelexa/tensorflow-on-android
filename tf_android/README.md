@@ -91,3 +91,6 @@ Most common errors can be fixed by ensuring:
 ### NoClassDefFoundError
 This is a runtime error related to running code from either of the external TF sources (The TF Inference library, or the TF Java API).
 This was solved for me by running from the menu bar Build > Clean Project
+
+### No OpKernel was registered to support Op 'Mod' with these attrs
+This is an issue with the default [BUILD](https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/kernels/BUILD) file cloned from the TensorFlow repo. Locate this file on you file system and locate the filegroup named "android_extended_ops_group1". Under 'srcs' add "cwise_op_mod.cc". This will include the Mod operation you need when during training.
