@@ -1,4 +1,17 @@
-
+# Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ==============================================================================
 
 import argparse
 import sys
@@ -17,37 +30,44 @@ def main(_):
 
   # Create the model
   x = tf.placeholder(tf.float32, [None, 784])
+
+  # Add a feed weight here. This will be input before training, and after each
+  # training step
   w = tf.placeholder(tf.float32, [784, 10])
+
+  # The weight var that will actually be used by the training step. It is simply
+  # assigned the samw value as the feed weight.
   W = tf.Variable(tf.identity(w))
+
+  # The below code was taken, unchanged, from github.com/tensorflow/tensorflow
+
   b = tf.Variable(tf.zeros([10]))
   y = tf.matmul(x, W) + b
 
   # Define loss and optimizer
   y_ = tf.placeholder(tf.float32, [None, 10])
 
-  # The raw formulation of cross-entropy,
-  #
-  #   tf.reduce_mean(-tf.reduce_sum(y_ * tf.log(tf.nn.softmax(y)),
-  #                                 reduction_indices=[1]))
-  #
-  # can be numerically unstable.
-  #
-  # So here we use tf.nn.softmax_cross_entropy_with_logits on the raw
-  # outputs of 'y', and then average across the batch.
   cross_entropy = tf.reduce_mean(
       tf.nn.softmax_cross_entropy_with_logits(labels=y_, logits=y))
   train_step = tf.train.GradientDescentOptimizer(0.5).minimize(cross_entropy)
 
   sess = tf.InteractiveSession()
+  # Need to feed in a value to w (little w, the feed) or else it will error
   tf.global_variables_initializer().run(feed_dict={w: np.zeros((784, 10), dtype=np.float32)})
+
   # Train
   results = []
   for _ in range(1000):
     batch_xs, batch_ys = mnist.train.next_batch(100)
     w_in = None
     if len(results) == 0:
+        # init feed
+        # NOTE: This may not be necessary, because we already initialized the w
+        # feed in line 56 above. TODO(tylermzeller, 3ygun) test to see if this is
+        # the case.
         w_in = np.zeros([784, 10])
     else:
+        # This is the trained weight after a train step. NOTE: see note above.
         w_in = results[1]
     results = sess.run([train_step, W], feed_dict={x: batch_xs, y_: batch_ys, w: w_in})
 
